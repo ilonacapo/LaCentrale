@@ -1,18 +1,31 @@
-
 services:
-###> doctrine/doctrine-bundle ###
+  app:
+    build: .
+    environment:
+      APP_ENV: dev
+      XDEBUG_MODE: debug
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      DATABASE_URL: mysql://root:Ilomilo4002@database:3306/centrale
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/var
+
   database:
-    image: mysql:8.2
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: Ilomilo4002
       MYSQL_DATABASE: centrale
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-###< doctrine/doctrine-bundle ###
+
+  mailer:
+    image: mailhog/mailhog
+    container_name: symfony_mailer
+    ports:
+      - "8025:8025"
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  db_data:
