@@ -1,10 +1,9 @@
 <?php
 
 
-namespace App\Entity;
+namespace App\Domain;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
 class Tag
 {
     

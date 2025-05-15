@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Domain;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

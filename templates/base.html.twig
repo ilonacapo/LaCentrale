@@ -30,15 +30,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('all_projects') }}"><i class="bi bi-folder"></i> Projets</a>
                     </li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('notifications') }}">
-        <i class="bi bi-bell"></i> Notifications
-        {% if unread_notifications > 0 %}
-            <span class="badge bg-danger">0</span>
-        {% endif %}
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('notifications') }}">
+                            <i class="bi bi-bell"></i> Notifications
+                            {% if unread_notifications is defined and unread_notifications > 0 %}
+                                <span class="badge bg-danger">0</span>
+                            {% endif %}
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('homepage') }}"><i class="bi bi-house-door"></i> Accueil</a>
                     </li>
