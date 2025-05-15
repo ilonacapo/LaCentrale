@@ -10,10 +10,10 @@ login_github_check:
     path: /login/github/check
     controller: App\Controller\GithubController::loginGithubCheck
     
-deploy_version:
-    path: /deploy/{name}/{version}
-    controller: App\Controller\GithubController::deployVersion
-    methods: [POST]
-    requirements:
-        name: ".+"
-        version: ".+"
+#deploy_version:
+#    path: /deploy/{name}/{version}
+#    controller: App\Controller\GithubController::deployVersion
+#    methods: [POST]
+#    requirements:
+#        name: ".+"
+#        version: ".+"

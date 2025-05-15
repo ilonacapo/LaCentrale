@@ -17,9 +17,11 @@ class DeploymentService
     public function deploy(string $name, string $version, string $dir): array
     {
 
-        $scriptPath = '../deploy_me.sh';
+        $scriptPath = '../src/deploy_me.sh';
         $process = new Process([$scriptPath, $name, $version, $dir]);
         $process->run();
+
+        dd($process->getOutput());
 
         // executes after the command finishes
         if (!$process->isSuccessful()) {

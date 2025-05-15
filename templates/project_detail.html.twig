@@ -70,21 +70,21 @@ document.querySelectorAll('.deploy-btn').forEach(button => {
         }
 
          try {
-        const response = await fetch('/deploy', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ repoName, version, baseDir})
-        });
+            const response = await fetch('/deploy', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ repoName, version, baseDir})
+            });
 
-        if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
-        
-        const data = await response.json();
-        console.log("Déploiement terminé :", data.message);
-        document.getElementById("deploy-log").innerHTML += data.message + "<br>";
+            if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
+            
+            const data = await response.json();
+            console.log("Déploiement terminé :", data.message);
+            document.getElementById("deploy-log").innerHTML += data.message + "<br>";
 
-    } catch (error) {
-        console.error("Erreur de déploiement :", error);
-    }
+            } catch (error) {
+                console.error("Erreur de déploiement :", error);
+            }
     });
 });
 

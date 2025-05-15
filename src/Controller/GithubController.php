@@ -20,25 +20,23 @@ class GithubController extends AbstractController
         $this->deploymentService = $deploymentService;
     }
 
-#[Route('/deploy', name: 'deploy_version', methods: ['POST'])]
-public function deployVersion(Request $request): JsonResponse
-{
-    $data = json_decode($request->getContent(), true);
-    
-    $repoName = $data['repoName'] ?? null;
-    $version = $data['version'] ?? null;
-    $base_dir = $data['base_dir'] ?? null;
+    #[Route('/deploy', name: 'deploy_version', methods: ['POST'])]
+    public function deployVersion(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        $repoName = $data['repoName'] ?? null;
+        $version = $data['version'] ?? null;
+        $base_dir = $data['baseDir'] ?? null;
 
-    if (!$repoName || !$version || !$base_dir) {
-        return new JsonResponse(['success' => false, 'message' => "Données manquantes"], 400);
+        if (!$repoName || !$version || !$base_dir) {
+            return new JsonResponse(['success' => false, 'message' => "Données manquantes"], 400);
+        }
+
+        $result = $this->deploymentService->deploy($repoName, $version, $base_dir);
+
+        return new JsonResponse($result);
     }
-
-    $result = $this->deploymentService->deploy($repoName, $version, $base_dir);
-
-    return new JsonResponse($result);
-}
-
-
 
     #[Route('/connect/github', name: 'connect_github')]
     public function connectGithub(ClientRegistry $clientRegistry): Response

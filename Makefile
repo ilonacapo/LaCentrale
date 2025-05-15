@@ -13,4 +13,7 @@ stop:
 clean:
 	docker compose -f compose.yaml down --volumes --remove-orphans
 
-.PHONY: build run install stop clean
+exec:
+	docker compose -f compose.yaml exec -it app ${command}
+
+.PHONY: build run install stop clean exec
