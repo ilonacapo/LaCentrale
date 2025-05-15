@@ -29,8 +29,8 @@ class ProjectController extends AbstractController {
         ]);
     }
 
-    #[Route('/project/{name}', name: 'project_details', requirements: ['name' => '.+'], methods: ['GET'])]
-    public function projectDetails(string $name, GithubService $githubService, SessionInterface $session): Response
+    #[Route('/project/{owner}/{name}', name: 'project_details', requirements: ['name' => '.+'], methods: ['GET'])]
+    public function projectDetails(GithubService $githubService, SessionInterface $session, string $owner, string $name): Response
     {
         $userProfile = $session->get('github_user', []);
         if (empty($userProfile['access_token'])) {
@@ -38,7 +38,6 @@ class ProjectController extends AbstractController {
         }
 
         $accessToken = $userProfile['access_token'];
-        $owner = $userProfile['username'] ?? null;
 
         try {
             $projectDetails = $githubService->apiRequest("https://api.github.com/repos/{$owner}/{$name}", $accessToken);

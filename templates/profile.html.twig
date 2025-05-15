@@ -42,7 +42,7 @@
                             <a href="{{ repo.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
                             
                             <!-- Nouveau bouton "Déployer" qui redirige vers la page des détails du projet -->
-                            <a href="{{ path('project_details', {'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
+                            <a href="{{ path('project_details', {'owner': repo.owner.login, 'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
                         </div>
                     </div>
                 </div>

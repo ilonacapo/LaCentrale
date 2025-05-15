@@ -31,7 +31,7 @@
                             <p class="card-text">{{ repo.description is not empty ? repo.description : 'Aucune description disponible.' }}</p>
                             <p><strong>Dernière mise à jour :</strong> {{ repo.updated_at|date('d/m/Y') }}</p>
                             <a href="{{ repo.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
-                            <button class="btn btn-secondary btn-sm" disabled>Déployer</button>
+                            <a href="{{ path('project_details', {'owner': repo.owner.login, 'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
                         </div>
                     </div>
                 </div>
