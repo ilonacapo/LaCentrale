@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil{% endblock %}
+
+{% block body %}
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            {% if organizations is defined and organizations|length > 0 %}
+                <h1 class="display-4">Projets de l'organisation : {{ organizations[1].login }}</h1>
+            {% else %}
+                <h1 class="display-4">Aucune organisation trouvée</h1>
+            {% endif %}
+            <p class="lead">Découvrez les projets en cours.</p>
+        </div>
+
+        <!-- Recherche -->
+        <div class="text-center mb-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un projet...">
+        </div>
+
+        <!-- Liste des projets -->
+        <h2>Projets</h2>
+        <div class="row">
+            {% if projects is defined and projects|length > 0 %}
+                {% for project in projects %}
+                    <div class="col-md-4 project-card" data-name="{{ project.name|lower }}">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ project.name ?? 'Nom inconnu' }}</h5>
+                                <p class="card-text">{{ project.description is not empty ? project.description : 'Aucune description disponible.' }}</p>
+                                <p><strong>Visibilité :</strong> {{ project.private ? 'Privé' : 'Public' }}</p>
+                                <p><strong>Dernière mise à jour :</strong> {{ project.updated_at|date('d/m/Y') }}</p>
+                                <a href="{{ project.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucun projet trouvé.</p>
+                </div>
+            {% endif %}
+        </div>
+
+                <!-- Bouton de connexion -->
+        <div class="text-center mb-4">
+            {% if not is_logged_in %}
+                <p class="alert alert-info">Connectez-vous pour voir vos projets privés.</p>
+                <a href="{{ path('connect_github') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-github"></i> Se connecter avec GitHub
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("searchInput").addEventListener("input", function() {
+            let searchValue = this.value.toLowerCase();
+            let projects = document.querySelectorAll(".project-card");
+
+            projects.forEach(project => {
+                let name = project.getAttribute("data-name");
+                project.style.display = name.includes(searchValue) ? "block" : "none";
+            });
+        });
+    </script>
+{% endblock %}
+

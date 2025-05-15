@@ -1,0 +1,18 @@
+
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    image: mysql:8.2
+    environment:
+      MYSQL_ROOT_PASSWORD: Ilomilo4002
+      MYSQL_DATABASE: centrale
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+###< doctrine/doctrine-bundle ###
+
+volumes:
+###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###

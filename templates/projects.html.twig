@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tous mes projets{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">
+            <img src="{{ userProfile.avatar_url }}" alt="Avatar" class="rounded-circle me-2" width="60">
+            {{ userProfile.login }}
+        </h1>
+        <p class="lead">Vous avez {{ total_repos }} projets GitHub.</p>
+        <p><strong>Followers :</strong> {{ userProfile.followers }}</p>
+        <p><strong>Following :</strong> {{ userProfile.following }}</p>
+    </div>
+
+    <!-- Recherche -->
+    <div class="text-center mb-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un projet...">
+    </div>
+
+    <!-- Section Projets récents -->
+    <h2>Projets récents</h2>
+    <div class="row">
+        {% if repositories is not empty %}
+            {% for repo in repositories %}
+                <div class="col-md-4 project-card" data-name="{{ repo.name|lower }}">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ repo.name }}</h5>
+                            <p class="card-text">{{ repo.description is not empty ? repo.description : 'Aucune description disponible.' }}</p>
+                            <p><strong>Dernière mise à jour :</strong> {{ repo.updated_at|date('d/m/Y') }}</p>
+                            <a href="{{ repo.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
+                            <button class="btn btn-secondary btn-sm" disabled>Déployer</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun projet récent trouvé.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById("searchInput").addEventListener("input", function() {
+    let searchValue = this.value.toLowerCase();
+    let projects = document.querySelectorAll(".project-card");
+
+    projects.forEach(project => {
+        let name = project.getAttribute("data-name");
+        project.style.display = name.includes(searchValue) ? "block" : "none";
+    });
+});
+</script>
+{% endblock %}

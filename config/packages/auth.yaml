@@ -1,0 +1,7 @@
+services:
+    # Enregistrer un logger spécifique pour l'authentification
+    app.logger.auth:
+        class: Symfony\Bridge\Monolog\Logger
+        arguments: ['auth']
+        calls:
+            - [pushHandler, ['@monolog.handler.auth']]

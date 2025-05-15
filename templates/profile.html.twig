@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">Bienvenue, <img src="{{ userProfile.avatar_url }}" alt="Avatar" class="rounded-circle me-2" width="60"> {{ userProfile.login }}</h1>
+        <p class="lead">Vous avez {{ total_repos }} projets GitHub.</p>
+        <p><strong>Followers :</strong> {{ userProfile.followers }}</p>
+        <p><strong>Following :</strong> {{ userProfile.following }}</p>
+    </div>
+
+    <!-- Section Organisations -->
+    <div class="mb-4">
+        <h2>Vos Organisations</h2>
+        {% if organizations is not empty %}
+            <ul class="list-group">
+                {% for org in organizations %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <img src="{{ org.avatar_url }}" alt="Avatar" class="me-2" width="40">
+                        <a href="{{ org.html_url }}" target="_blank">{{ org.login }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune organisation trouvée.</p>
+        {% endif %}
+    </div>
+
+    <!-- Section Projets récents -->
+    <h2>Projets récents</h2>
+    <div class="row">
+        {% if repositories is not empty %}
+            {% for repo in repositories|sort((a, b) => b.updated_at <=> a.updated_at)|slice(0, 5) %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ repo.name }}</h5>
+                            <p class="card-text">{{ repo.description is not empty ? repo.description : 'Aucune description disponible.' }}</p>
+                            <p><strong>Dernière mise à jour :</strong> {{ repo.updated_at|date('d/m/Y') }}</p>
+                            <a href="{{ repo.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
+                            
+                            <!-- Nouveau bouton "Déployer" qui redirige vers la page des détails du projet -->
+                            <a href="{{ path('project_details', {'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun projet récent trouvé.</p>
+        {% endif %}
+    </div>
+
+    <!-- Bouton pour voir tous les projets -->
+    <div class="text-center mt-4">
+        <a href="{{ path('all_projects') }}" class="btn btn-success btn-lg">Plus de projets</a>
+    </div>
+
+   <h2>Dernières modifications</h2>
+{% if latestCommits is not empty %}
+    <ul class="list-group mb-4">
+        {% for commit in latestCommits %}
+            <li class="list-group-item">
+                <strong>{{ commit.commit.message }}</strong>  
+                <br><small>Par {{ commit.commit.author.name }} le {{ commit.commit.author.date|date('d/m/Y à H:i') }}</small>
+                <br><small>Projet : {{ commit.repo_name }}</small>
+                <br><a href="{{ commit.html_url }}" target="_blank">Voir le commit</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune modification récente trouvée.</p>
+{% endif %}
+
+<!-- <h2>Santé du serveur </h2>
+<div class="card bg-light p-3 mb-4">
+    <p><strong>Espace disque :</strong> <span id="disk"></span> GB libres / <span id="disk_total"></span> GB</p>
+    <p><strong>Charge CPU :</strong> <span id="cpu"></span>%</p>
+    <p><strong>Mémoire utilisée :</strong> <span id="memory"></span> Mo / <span id="memory_limit"></span></p>
+</div> --!>
+
+<script>
+fetch('/server-status')
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("disk").textContent = data.disk.free;
+        document.getElementById("disk_total").textContent = data.disk.total;
+        document.getElementById("cpu").textContent = data.cpu.load;
+        document.getElementById("memory").textContent = data.memory.usage;
+        document.getElementById("memory_limit").textContent = data.memory.limit;
+    })
+    .catch(error => console.error("Erreur récupération santé serveur :", error));
+</script>
+
+
+    
+</div>
+{% endblock %}

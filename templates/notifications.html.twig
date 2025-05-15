@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="display-4 text-center">Notifications</h1>
+
+    <!-- Notifications GitHub -->
+    <h2>Notifications GitHub</h2>
+    {% if githubNotifications|length > 0 %}
+        <ul class="list-group">
+            {% for notif in githubNotifications %}
+                <li class="list-group-item">
+                    <strong>{{ notif.subject.title }}</strong> - <a href="{{ notif.subject.url }}" target="_blank">Voir sur GitHub</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune notification GitHub trouvée.</p>
+    {% endif %}
+
+    <!-- Notifications internes -->
+    <h2>Événements internes</h2>
+    {% if internalNotifications|length > 0 %}
+        <ul class="list-group">
+            {% for notif in internalNotifications %}
+                <li class="list-group-item">
+                    <strong>{{ notif.title }}</strong> - {{ notif.time }}
+                    <p>{{ notif.message }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune notification interne trouvée.</p>
+    {% endif %}
+</div>
+{% endblock %}

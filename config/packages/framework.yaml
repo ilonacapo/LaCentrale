@@ -1,0 +1,22 @@
+framework:
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+        storage_factory_id: session.storage.factory.native
+    csrf_protection: true
+    http_method_override: true
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+    default_locale: 'en'
+    validation:
+        email_validation_mode: html5
+    profiler:
+        enabled: '%kernel.debug%'
+    cache:
+        app: cache.adapter.filesystem
+        system: cache.adapter.system
+        pools:
+            #cache.redis:
+            #    adapter: cache.adapter.redis
+            #    provider: '%env(REDIS_URL)%'
