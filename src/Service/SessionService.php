@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionService
 {
@@ -11,13 +12,16 @@ class SessionService
     public function __construct(RequestStack $requestStack)
     {
         $this->session = $requestStack->getSession();
+
+        if (!$this->session->isStarted()) {
+            $this->session->start();
+        }
     }
 
     public function setGithubData(array $userData): void
     {
         $this->session->set('github_user', $userData);
 
-        // Déboguer les données stockées
         if (!$this->session->has('github_user')) {
             throw new \Exception('Les données utilisateur n\'ont pas été stockées dans la session.');
         }
@@ -26,19 +30,14 @@ class SessionService
     public function setRepositoriesAndOrganizations(array $repositories, array $organizations): void
     {
         // Log des données reçues
-        file_put_contents('debug.log', "Repositories: " . print_r($repositories, true) . "\n", FILE_APPEND);
-        file_put_contents('debug.log', "Organizations: " . print_r($organizations, true) . "\n", FILE_APPEND);
 
         $this->session->set('github_repositories', $repositories);
         $this->session->set('github_organizations', $organizations);
 
         // Vérifier si les données sont bien stockées
         if (!$this->session->has('github_repositories')) {
-           // throw new \Exception('Les repositories n\'ont pas été stockés dans la session.');
+            throw new \Exception('Les repositories n\'ont pas été stockés dans la session.');
         }
-
-        file_put_contents('debug.log', "Repositories stockés dans la session : " . print_r($repositories, true) . "\n", FILE_APPEND);
-        file_put_contents(__DIR__ . '/../../public/debug.log', "Repositories stockés dans la session : " . print_r($repositories, true) . "\n", FILE_APPEND);
     }
 
     public function getGithubData(): array
@@ -62,5 +61,10 @@ class SessionService
             'repositories' => $repositories,
             'organizations' => $organizations,
         ];
+    }
+
+    public function getSession(): SessionInterface
+    {
+        return $this->session;
     }
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controller;
 
@@ -9,14 +9,27 @@ use App\Service\SessionService;
 use App\Service\GithubService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class ProjectController extends AbstractController {
+class ProjectController extends AbstractController
+{
 
     #[Route('/projects', name: 'all_projects')]
     public function allProjects(GithubService $githubService, SessionService $sessionService): Response
     {
-        $accessToken = $sessionService->getGithubData()['user']['access_token'] ?? null;
-        $user = $githubService->apiRequest('https://api.github.com/user', $accessToken);
+        // Vérifier que la session est bien démarrée
+        if (!$sessionService->getSession()->isStarted()) {
+            $sessionService->getSession()->start();
+        }
 
+        // Vérifier les données de session avant de les utiliser
+        $githubData = $sessionService->getGithubData();
+
+        if (!isset($githubData['user']['access_token'])) {
+            return new Response('Authentification requise.', Response::HTTP_FORBIDDEN);
+        }
+
+        $accessToken = $githubData['user']['access_token'];
+
+        $user = $githubService->apiRequest('https://api.github.com/user', $accessToken);
         $repos = $accessToken ? $githubService->apiRequest('https://api.github.com/user/repos', $accessToken) : [];
         $orgRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos');
         $projects = array_merge($repos, $orgRepos);
@@ -29,9 +42,14 @@ class ProjectController extends AbstractController {
         ]);
     }
 
+
     #[Route('/project/{owner}/{name}', name: 'project_details', requirements: ['name' => '.+'], methods: ['GET'])]
     public function projectDetails(GithubService $githubService, SessionInterface $session, string $owner, string $name): Response
     {
+        if (!$session->isStarted()) {
+            $session->start();
+        }
+
         $userProfile = $session->get('github_user', []);
         if (empty($userProfile['access_token'])) {
             return new Response('Authentification requise.', Response::HTTP_FORBIDDEN);
@@ -45,7 +63,9 @@ class ProjectController extends AbstractController {
 
             return $this->render('project_detail.html.twig', [
                 'project' => $projectDetails,
-                'versions' => $tags
+                'versions' => $tags,
+                'github_token' => $accessToken,
+
             ]);
         } catch (\Exception $e) {
             return new Response('Erreur GitHub API : ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

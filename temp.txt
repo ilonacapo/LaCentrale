@@ -1,0 +1,13 @@
+<h2>Événements internes</h2>
+    {% if internalNotifications|length > 0 %}
+        <ul class="list-group">
+            {% for notif in internalNotifications %}
+                <li class="list-group-item">
+                    <strong>{{ notif.title }}</strong> - {{ notif.time }}
+                    <p>{{ notif.message }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune notification interne trouvée.</p>
+    {% endif %}

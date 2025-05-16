@@ -42,7 +42,7 @@
                             <a href="{{ repo.html_url }}" class="btn btn-primary btn-sm" target="_blank">Voir sur GitHub</a>
                             
                             <!-- Nouveau bouton "Déployer" qui redirige vers la page des détails du projet -->
-                            <a href="{{ path('project_details', {'owner': repo.owner.login, 'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
+                            <a href="{{path('project_details', {'owner': repo.owner.login, 'name': repo.name}) }}" class="btn btn-secondary btn-sm">Déployer</a>
                         </div>
                     </div>
                 </div>
@@ -71,29 +71,6 @@
     </ul>
 {% else %}
     <p>Aucune modification récente trouvée.</p>
-{% endif %}
-
-<!-- <h2>Santé du serveur </h2>
-<div class="card bg-light p-3 mb-4">
-    <p><strong>Espace disque :</strong> <span id="disk"></span> GB libres / <span id="disk_total"></span> GB</p>
-    <p><strong>Charge CPU :</strong> <span id="cpu"></span>%</p>
-    <p><strong>Mémoire utilisée :</strong> <span id="memory"></span> Mo / <span id="memory_limit"></span></p>
-</div> --!>
-
-<script>
-fetch('/server-status')
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("disk").textContent = data.disk.free;
-        document.getElementById("disk_total").textContent = data.disk.total;
-        document.getElementById("cpu").textContent = data.cpu.load;
-        document.getElementById("memory").textContent = data.memory.usage;
-        document.getElementById("memory_limit").textContent = data.memory.limit;
-    })
-    .catch(error => console.error("Erreur récupération santé serveur :", error));
-</script>
-
-
-    
+{% endif %}    
 </div>
 {% endblock %}

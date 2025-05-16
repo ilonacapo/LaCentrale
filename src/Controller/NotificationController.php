@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controller;
 
@@ -13,7 +13,6 @@ class NotificationController extends AbstractController
     #[Route('/notifications', name: 'notifications')]
     public function index(GithubService $githubService, SessionInterface $session): Response
     {
-        return $this->render('home/test.html.twig');
         $accessToken = $this->getUser() ? $this->getUser()->getAccessToken() : null;
         $githubNotifications = $accessToken ? $githubService->apiRequest('https://api.github.com/notifications', $accessToken) : [];
 
@@ -30,7 +29,7 @@ class NotificationController extends AbstractController
         ]);
     }
 
-   /* #[Route('/add-notification', name: 'add_notification')]
+    /* #[Route('/add-notification', name: 'add_notification')]
     public function addNotification(SessionInterface $session): Response
     {
         $notifications = $session->get('notifications', []);

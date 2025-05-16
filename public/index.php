@@ -3,7 +3,9 @@
 use App\Kernel;
 use Symfony\Component\HttpFoundation\Request;
 
+
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
 
 return function (array $context) {
     $_SERVER['APP_ENV'] = $context['APP_ENV'] ?? 'dev';
@@ -15,5 +17,5 @@ return function (array $context) {
     $response->send();
     $kernel->terminate($request, $response);
 
-    return $kernel;
+    //return $kernel;
 };

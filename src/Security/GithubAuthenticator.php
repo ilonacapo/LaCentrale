@@ -1,8 +1,7 @@
-<?php 
+<?php
 
 namespace App\Security;
 
-use App\Domain\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,6 @@ class GithubAuthenticator extends AbstractAuthenticator
     private ClientRegistry $clientRegistry;
     private RequestStack $requestStack;
     private LoggerInterface $logger;
-    private UserRepository $userRepository;
 
     public function __construct(
         ClientRegistry $clientRegistry,
@@ -32,7 +30,6 @@ class GithubAuthenticator extends AbstractAuthenticator
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->logger = $logger;
-        $this->userRepository = $userRepository;
         $this->requestStack = $requestStack;
     }
 
@@ -45,16 +42,10 @@ class GithubAuthenticator extends AbstractAuthenticator
             $session->start();
         }
 
-        
-        $expectedState = $session->get('oauth2_state');
-        $receivedState = $request->query->get('state');
-
-        file_put_contents(__DIR__ . '/../../public/debug.log', "State attendu : " . $expectedState . "\nState reçu : " . $receivedState . "\n", FILE_APPEND);
-
         $accessToken = $client->getAccessToken();
         $githubUser = $client->fetchUserFromToken($accessToken);
 
-        
+
         $userData = $githubUser->toArray();
         $avatarUrl = $userData['avatar_url'] ?? null;
 
@@ -77,7 +68,7 @@ class GithubAuthenticator extends AbstractAuthenticator
     {
         $session = $this->requestStack->getSession();
 
-        
+
         if (!$session->isStarted()) {
             $session->start();
         }
@@ -85,20 +76,18 @@ class GithubAuthenticator extends AbstractAuthenticator
         // Générer et stocker un state sécurisé
         $state = bin2hex(random_bytes(16));
         $session->set('oauth2_state', $state);
-        $session->save(); 
+        $session->save();
 
-        file_put_contents(__DIR__ . '/../../public/debug.log', "State généré et stocké : " . $state . "\n", FILE_APPEND);
 
-return $this->clientRegistry->getClient('github')->redirect([
-    'state' => $state,
-    'scope' => 'user,repo,notifications',
-    'allow_signup' => false,
-    'force_login' => true
-], []);
-
+        return $this->clientRegistry->getClient('github')->redirect([
+            'state' => $state,
+            'scope' => 'user,repo,notifications',
+            'allow_signup' => false,
+            'force_login' => true
+        ], []);
     }
 
-public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $this->logger->warning('Échec d\'authentification', ['exception' => $exception->getMessage()]);
         return new Response('Authentification échouée : ' . $exception->getMessage(), Response::HTTP_FORBIDDEN);
