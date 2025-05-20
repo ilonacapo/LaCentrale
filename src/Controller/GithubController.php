@@ -29,43 +29,43 @@ class GithubController extends AbstractController
     public function deployVersion(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
+        
         $repoName = $data['repoName'] ?? null;
         $version = $data['version'] ?? null;
         $baseDir = $data['baseDir'] ?? null;
-        try {
-            $this->logger->info("Tentative de déploiement : Repo = $repoName, Version = $version, BaseDir = $baseDir");
+try {
+    $this->logger->info("Tentative de déploiement : Repo = $repoName, Version = $version, BaseDir = $baseDir");
+    
+    $result = $this->deploymentService->deploy($repoName, $version, $baseDir);
 
-            $result = $this->deploymentService->deploy($repoName, $version, $baseDir);
-
-            return new JsonResponse($result);
-        } catch (\Exception $e) {
-            $this->logger->error("Erreur interne : " . $e->getMessage());
-            return new JsonResponse(['success' => false, 'message' => 'Erreur interne du serveur', 'error' => $e->getMessage()], 500);
-        }
+    return new JsonResponse($result);
+} catch (\Exception $e) {
+    $this->logger->error("Erreur interne : " . $e->getMessage());
+    return new JsonResponse(['success' => false, 'message' => 'Erreur interne du serveur', 'error' => $e->getMessage()], 500);
+}
         return new JsonResponse($result);
     }
 
     #[Route('/deploy/logs', name: 'deploy_logs')]
-    public function streamLogs()
-    {
-        header('Content-Type: text/event-stream');
-        header('Cache-Control: no-cache');
+public function streamLogs()
+{
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
 
-        $logFile = '/var/log/deploy.log';
+    $logFile = '/var/log/deploy.log';
 
-        while (true) {
-            if (file_exists($logFile)) {
-                $logs = explode("\n", file_get_contents($logFile));
-                $lastLogs = array_slice($logs, -2);
+    while (true) {
+        if (file_exists($logFile)) {
+       $logs = explode("\n", file_get_contents($logFile));
+            $lastLogs = array_slice($logs, -2); 
 
-                echo "data: " . json_encode(['logs' => nl2br(implode("\n", $lastLogs))]) . "\n\n";
-                ob_flush();
-                flush();
-            }
-            sleep(1); // Pause avant de récupérer les nouveaux logs
+            echo "data: " . json_encode(['logs' => nl2br(implode("\n", $lastLogs))]) . "\n\n";
+            ob_flush();
+            flush();
         }
+        sleep(1); // Pause avant de récupérer les nouveaux logs
     }
+}
 
     #[Route('/connect/github', name: 'connect_github')]
     public function connectGithub(ClientRegistry $clientRegistry): Response

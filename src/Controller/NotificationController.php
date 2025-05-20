@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Controller;
 
@@ -29,7 +29,7 @@ class NotificationController extends AbstractController
         ]);
     }
 
-    /* #[Route('/add-notification', name: 'add_notification')]
+   /* #[Route('/add-notification', name: 'add_notification')]
     public function addNotification(SessionInterface $session): Response
     {
         $notifications = $session->get('notifications', []);

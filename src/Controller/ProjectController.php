@@ -30,8 +30,8 @@ class ProjectController extends AbstractController
         $accessToken = $githubData['user']['access_token'];
 
         $user = $githubService->apiRequest('https://api.github.com/user', $accessToken);
-        $repos = $accessToken ? $githubService->apiRequest('https://api.github.com/user/repos', $accessToken) : [];
-        $orgRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos');
+        $repos =  $githubService->apiRequest('https://api.github.com/user/repos', $accessToken);
+        $orgRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos', $accessToken);
         $projects = array_merge($repos, $orgRepos);
 
         return $this->render('projects.html.twig', [

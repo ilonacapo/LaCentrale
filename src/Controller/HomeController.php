@@ -17,27 +17,40 @@ class HomeController extends AbstractController
     public function index(GithubService $githubService, SessionService $sessionService): Response
     {
 
+        $githubData = $sessionService->getGithubData();
+
         $user = $this->getUser();
-               $accessToken = $this->getUser() ? $this->getUser()->getAccessToken() : null;
+        $accessToken = $githubData['user']['access_token'];
 
 
-        if ($accessToken) {
-            $userRepos = $githubService->apiRequest('https://api.github.com/user/repos', $accessToken);
-            $nyxRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos', $accessToken);
-        } else {
+        if (!isset($githubData['user']['access_token']) || !is_string($githubData['user']['access_token']) || !$accessToken) {
             $userRepos = [];
-            $nyxRepos = [];
-        }
+            $nyxRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos/type=public', $_ENV['GITHUB_TOKEN']);
+            $projects =  $nyxRepos;
+            return $this->render('home/index.html.twig', [
+                'projects' => $projects,
+                'organizations' => [],
+                'is_logged_in' => false,
+                'unread_notifications' => '0',
 
-        $projects = array_merge($userRepos, $nyxRepos);
+            ]);
+        } else  {
 
+        $accessToken = $githubData['user']['access_token'];
+
+
+        $userRepos = $githubService->apiRequest('https://api.github.com/user/repos', $accessToken);
+        $nyxRepos = $githubService->apiRequest('https://api.github.com/orgs/Nyx-Corp/repos', $accessToken);
+
+        $projects = array_merge(array_slice($userRepos, 1), array_slice($nyxRepos, 2));
         return $this->render('home/index.html.twig', [
             'projects' => $projects,
             'organizations' => $githubService->apiRequest('https://api.github.com/user/orgs', $accessToken),
-            'is_logged_in' => (bool) $user,
+            'is_logged_in' => true,
             'unread_notifications' => $githubService->apiRequest('https://api.github.com/notifications', $accessToken),
 
         ]);
+    }
     }
 
 

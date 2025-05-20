@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Service;
-
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -9,19 +8,22 @@ class SessionService
 {
     private $session;
 
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->session = $requestStack->getSession();
+public function __construct(RequestStack $requestStack)
+{
+    $this->session = $requestStack->getSession();
 
-        if (!$this->session->isStarted()) {
-            $this->session->start();
-        }
+    if (!$this->session->isStarted() && php_sapi_name() !== 'cli') {
+        $this->session->start();
     }
+}
+
+
 
     public function setGithubData(array $userData): void
     {
         $this->session->set('github_user', $userData);
 
+        // Déboguer les données stockées
         if (!$this->session->has('github_user')) {
             throw new \Exception('Les données utilisateur n\'ont pas été stockées dans la session.');
         }
@@ -36,8 +38,9 @@ class SessionService
 
         // Vérifier si les données sont bien stockées
         if (!$this->session->has('github_repositories')) {
-            throw new \Exception('Les repositories n\'ont pas été stockés dans la session.');
+           throw new \Exception('Les repositories n\'ont pas été stockés dans la session.');
         }
+
     }
 
     public function getGithubData(): array
@@ -64,7 +67,8 @@ class SessionService
     }
 
     public function getSession(): SessionInterface
-    {
-        return $this->session;
-    }
+{
+    return $this->session;
+}
+
 }
